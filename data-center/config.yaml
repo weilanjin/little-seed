@@ -1,0 +1,11 @@
+name: data-center
+server:
+  addr: ":8002"
+etcd:
+  endpoints: []
+  username: ""
+  password: ""
+  dialTimeout: 5s
+  configKey: ""
+  servicePrefix: /little-seed/services
+  registerTTL: 10

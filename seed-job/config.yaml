@@ -1,0 +1,11 @@
+name: seed-job
+server:
+  addr: ":9005"
+etcd:
+  endpoints: []
+  username: ""
+  password: ""
+  dialTimeout: 5s
+  configKey: ""
+  servicePrefix: /little-seed/services
+  registerTTL: 10

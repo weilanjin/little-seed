@@ -1,3 +1,16 @@
 go 1.26.1
 
-use ./kit
+use (
+	./admin
+	./data-center
+	./gateway
+	./gateway-pay
+	./seed-account
+	./seed-activity
+	./seed-event
+	./seed-game
+	./seed-job
+	./seed-kit
+	./seed-mall
+	./proto
+)

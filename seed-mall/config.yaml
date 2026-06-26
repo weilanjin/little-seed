@@ -1,0 +1,11 @@
+name: seed-mall
+server:
+  addr: ":9006"
+etcd:
+  endpoints: []
+  username: ""
+  password: ""
+  dialTimeout: 5s
+  configKey: ""
+  servicePrefix: /little-seed/services
+  registerTTL: 10

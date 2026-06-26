@@ -1,0 +1,11 @@
+name: admin
+server:
+  addr: ":8001"
+etcd:
+  endpoints: []
+  username: ""
+  password: ""
+  dialTimeout: 5s
+  configKey: ""
+  servicePrefix: /little-seed/services
+  registerTTL: 10

@@ -1,0 +1,11 @@
+name: gateway-pay
+server:
+  addr: ":8004"
+etcd:
+  endpoints: []
+  username: ""
+  password: ""
+  dialTimeout: 5s
+  configKey: ""
+  servicePrefix: /little-seed/services
+  registerTTL: 10

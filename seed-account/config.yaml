@@ -1,0 +1,11 @@
+name: seed-account
+server:
+  addr: ":9001"
+etcd:
+  endpoints: []
+  username: ""
+  password: ""
+  dialTimeout: 5s
+  configKey: ""
+  servicePrefix: /little-seed/services
+  registerTTL: 10

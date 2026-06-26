@@ -1,0 +1,11 @@
+name: seed-event
+server:
+  addr: ":9003"
+etcd:
+  endpoints: []
+  username: ""
+  password: ""
+  dialTimeout: 5s
+  configKey: ""
+  servicePrefix: /little-seed/services
+  registerTTL: 10
