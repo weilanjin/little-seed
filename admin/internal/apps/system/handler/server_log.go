@@ -25,7 +25,17 @@ func NewServerLogApi(svc *service.Service) *ServerLogApi {
 	return &ServerLogApi{svc: svc}
 }
 
-func (api *ServerLogApi) Search(ctx context.Context, req *LogSearchReq) (*service.LogSearchResp, error) {
+// GetSearch 查询服务日志内容。
+func (api *ServerLogApi) GetSearch(ctx context.Context, req *LogSearchReq) (*service.LogSearchResp, error) {
+	return api.search(ctx, req)
+}
+
+// GetList 获取服务日志文件列表。
+func (api *ServerLogApi) GetList(ctx context.Context, req *struct{}) (*service.LogListResp, error) {
+	return api.list(ctx, req)
+}
+
+func (api *ServerLogApi) search(ctx context.Context, req *LogSearchReq) (*service.LogSearchResp, error) {
 	startAt, err := parseTime(req.StartAt)
 	if err != nil {
 		return nil, fmt.Errorf("start_at invalid: %w", err)
@@ -47,7 +57,7 @@ func (api *ServerLogApi) Search(ctx context.Context, req *LogSearchReq) (*servic
 	})
 }
 
-func (api *ServerLogApi) List(ctx context.Context, req *struct{}) (*service.LogListResp, error) {
+func (api *ServerLogApi) list(ctx context.Context, req *struct{}) (*service.LogListResp, error) {
 	return api.svc.ServerLog.List(ctx, req)
 }
 

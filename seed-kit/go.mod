@@ -2,6 +2,8 @@ module little-seed/kit
 
 go 1.26.1
 
+require little-seed/common v0.0.0
+
 require (
 	go.etcd.io/etcd/api/v3 v3.6.6
 	go.etcd.io/etcd/client/v3 v3.6.6
@@ -29,3 +31,5 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260622175928-b703f567277d // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 )
+
+replace little-seed/common => ../seed-common

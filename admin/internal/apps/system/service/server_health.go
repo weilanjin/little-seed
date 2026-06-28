@@ -21,7 +21,7 @@ func NewServerHealth(data *repo.Data) *ServerHealth {
 }
 
 func (s *ServerHealth) List(ctx context.Context) (*ServiceListResp, error) {
-	services, err := s.data.FindServiceList(ctx)
+	services, err := s.data.EtcdCli.FindServiceList(ctx)
 	if err != nil {
 		return nil, err
 	}

@@ -6,10 +6,16 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func LoadYAML(path string, out any) error {
+// LoadYAML loads a YAML configuration file into a struct of type T.
+func LoadYAML[T any](path string) (*T, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return yaml.Unmarshal(data, out)
+
+	cfg := new(T)
+	if err := yaml.Unmarshal(data, cfg); err != nil {
+		return nil, err
+	}
+	return cfg, nil
 }

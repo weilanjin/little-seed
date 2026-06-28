@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -12,32 +13,32 @@ import (
 )
 
 type Config struct {
-	Name   string       `yaml:"name"`
 	Server ServerConfig `yaml:"server"`
-	Etcd   etcd.Config  `yaml:"etcd"`
+	Etcd   etcd.Config  `yaml:"-"`
 }
 
 type ServerConfig struct {
-	Addr string `yaml:"addr"`
+	Name        string   `yaml:"name"`
+	Addr        string   `yaml:"addr"`
+	ConfigNames []string `yaml:"configNames"`
 }
 
 func main() {
-	cfg, err := loadConfig("config.yaml")
-	if err != nil {
-		log.Fatalf("failed to load config: %v", err)
-	}
-	if err := loadRemoteConfig(context.Background(), &cfg); err != nil {
-		log.Fatalf("failed to load remote config: %v", err)
-	}
-
 	server := core.NewServer[Config]()
 	server.Init(func(app *Config) error {
-		*app = cfg
+		cfg, err := conf.LoadYAML[Config]("config.yaml")
+		if err != nil {
+			return fmt.Errorf("failed to load config: %w", err)
+		}
+		if err := loadRemoteConfig(context.Background(), cfg); err != nil {
+			return fmt.Errorf("failed to load remote config: %w", err)
+		}
+		*app = *cfg
 		return nil
 	})
 	server.Add(func(app *Config) (core.Service, error) {
 		return etcd.NewRegistryService(app.Etcd, etcd.Service{
-			Name: app.Name,
+			Name: app.Server.Name,
 			Addr: app.Server.Addr,
 		}), nil
 	})
@@ -58,17 +59,21 @@ func main() {
 	}
 }
 
-func loadConfig(path string) (Config, error) {
-	var cfg Config
-	if err := conf.LoadYAML(path, &cfg); err != nil {
-		return cfg, err
-	}
-	return cfg, nil
-}
-
 func loadRemoteConfig(ctx context.Context, cfg *Config) error {
-	if !cfg.Etcd.Enabled() || cfg.Etcd.ConfigKey == "" {
+	etcdCfg, err := etcd.LoadCommonConfig()
+	if err != nil {
+		return err
+	}
+	etcdCfg.ConfigNames = cfg.Server.ConfigNames
+	cfg.Etcd = etcdCfg
+
+	if !cfg.Etcd.Enabled() {
 		return nil
+	}
+
+	serviceName := cfg.Server.Name
+	if serviceName == "" {
+		return fmt.Errorf("server.name is required")
 	}
 
 	client, err := etcd.NewClient(ctx, cfg.Etcd)
@@ -77,5 +82,11 @@ func loadRemoteConfig(ctx context.Context, cfg *Config) error {
 	}
 	defer client.Close()
 
-	return etcd.LoadYAML(ctx, client, cfg.Etcd.ConfigKey, cfg)
+	if err := etcd.LoadServiceYAML(ctx, client, cfg.Etcd, serviceName, cfg); err != nil {
+		return err
+	}
+	cfg.Server.Name = serviceName
+	cfg.Server.ConfigNames = etcdCfg.ConfigNames
+	cfg.Etcd = etcdCfg
+	return nil
 }

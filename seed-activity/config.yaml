@@ -1,11 +1,3 @@
-name: seed-activity
 server:
-  addr: ":9002"
-etcd:
-  endpoints: []
-  username: ""
-  password: ""
-  dialTimeout: 5s
-  configKey: ""
-  servicePrefix: /little-seed/services
-  registerTTL: 10
+  name: seed-activity
+  configNames: []

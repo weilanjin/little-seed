@@ -10,6 +10,7 @@ use (
 	./seed-event
 	./seed-game
 	./seed-job
+	./seed-common
 	./seed-kit
 	./seed-mall
 	./proto

@@ -12,7 +12,7 @@ package codes
 type Code = int32
 
 const (
-	OK                  Code = 200
+	OK                  Code = 0
 	BadRequest          Code = 400
 	TokenInvalid        Code = 401
 	TokenMission        Code = 402

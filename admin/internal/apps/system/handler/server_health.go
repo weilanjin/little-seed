@@ -14,6 +14,7 @@ func NewServerHealthApi(svc *service.Service) *ServerHealthApi {
 	return &ServerHealthApi{svc: svc}
 }
 
-func (api *ServerHealthApi) List(ctx context.Context, req *struct{}) (*service.ServiceListResp, error) {
+// 获取注册服务列表
+func (api *ServerHealthApi) GetList(ctx context.Context, req *struct{}) (*service.ServiceListResp, error) {
 	return api.svc.ServerHealth.List(ctx)
 }

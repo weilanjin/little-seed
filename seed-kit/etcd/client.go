@@ -2,30 +2,27 @@ package etcd
 
 import (
 	"context"
-	"time"
+	"fmt"
 
 	clientv3 "go.etcd.io/etcd/client/v3"
 )
 
 func NewClient(ctx context.Context, cfg Config) (*clientv3.Client, error) {
-	dialTimeout := cfg.DialTimeout.TimeDuration()
-	if dialTimeout <= 0 {
-		dialTimeout = 5 * time.Second
-	}
+	cfg = cfg.withDefaults()
 
 	client, err := clientv3.New(clientv3.Config{
 		Endpoints:   cfg.Endpoints,
 		Username:    cfg.Username,
 		Password:    cfg.Password,
-		DialTimeout: dialTimeout,
+		DialTimeout: cfg.DialTimeout.TimeDuration(),
 	})
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("create etcd client: %w", err)
 	}
 
 	if err := client.Sync(ctx); err != nil {
 		_ = client.Close()
-		return nil, err
+		return nil, fmt.Errorf("sync etcd client: %w", err)
 	}
 	return client, nil
 }

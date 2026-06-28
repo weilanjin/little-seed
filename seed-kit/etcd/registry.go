@@ -27,7 +27,7 @@ type RegistryService struct {
 
 func NewRegistryService(cfg Config, service Service) *RegistryService {
 	return &RegistryService{
-		cfg:     cfg,
+		cfg:     cfg.withDefaults(),
 		service: service,
 	}
 }
@@ -115,9 +115,6 @@ func (s *RegistryService) keepAlive(ctx context.Context, keepAliveCh <-chan *cli
 }
 
 func serviceKey(prefix, name, addr string) string {
-	if prefix == "" {
-		prefix = "/services"
-	}
 	prefix = "/" + strings.Trim(prefix, "/")
 	name = strings.Trim(name, "/")
 	addr = strings.Trim(addr, "/")
