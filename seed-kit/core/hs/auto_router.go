@@ -11,6 +11,7 @@ import (
 
 	"little-seed/kit/core/hs/response"
 	"little-seed/kit/core/hs/response/codes"
+	"little-seed/kit/types"
 )
 
 // HTTPMethodPrefix 定义HTTP方法前缀映射
@@ -244,6 +245,16 @@ func CreateAutoHandler(methodInfo ServiceMethodInfo, service interface{}) http.H
 						return
 					}
 				}
+
+				// 校验请求参数
+				if err := validateRequest(req.Interface()); err != nil {
+					slog.Error("validate request error", "method", methodInfo.MethodName, "err", err)
+					response.JSON(w, response.Resp{
+						Code: int(codes.BadRequest),
+						Msg:  err.Error(),
+					})
+					return
+				}
 			}
 		}
 
@@ -255,6 +266,15 @@ func CreateAutoHandler(methodInfo ServiceMethodInfo, service interface{}) http.H
 		// 处理返回值
 		handleMethodResults(w, results, methodInfo.MethodName)
 	}
+}
+
+// validateRequest 在 API 层自动调用请求参数自身的校验方法。
+func validateRequest(req any) error {
+	validator, ok := req.(types.Validator)
+	if !ok {
+		return nil
+	}
+	return validator.Validate()
 }
 
 // parseQueryParams 从URL Query参数解析到结构体

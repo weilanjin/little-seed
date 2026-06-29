@@ -3,19 +3,12 @@ package handler
 import (
 	"context"
 	"fmt"
+	"little-seed/admin/internal/apps/system/dto"
 	"time"
 
 	"little-seed/admin/internal/apps/system/repo"
 	"little-seed/admin/internal/apps/system/service"
 )
-
-type LogSearchReq struct {
-	FileName string `json:"file_name"`
-	Include  string `json:"include"`
-	Exclude  string `json:"exclude"`
-	StartAt  string `json:"start_at"`
-	EndAt    string `json:"end_at"`
-}
 
 type ServerLogApi struct {
 	svc *service.Service
@@ -26,16 +19,7 @@ func NewServerLogApi(svc *service.Service) *ServerLogApi {
 }
 
 // GetSearch 查询服务日志内容。
-func (api *ServerLogApi) GetSearch(ctx context.Context, req *LogSearchReq) (*service.LogSearchResp, error) {
-	return api.search(ctx, req)
-}
-
-// GetList 获取服务日志文件列表。
-func (api *ServerLogApi) GetList(ctx context.Context, req *struct{}) (*service.LogListResp, error) {
-	return api.list(ctx, req)
-}
-
-func (api *ServerLogApi) search(ctx context.Context, req *LogSearchReq) (*service.LogSearchResp, error) {
+func (api *ServerLogApi) GetSearch(ctx context.Context, req *dto.LogSearchReq) (*service.LogSearchResp, error) {
 	startAt, err := parseTime(req.StartAt)
 	if err != nil {
 		return nil, fmt.Errorf("start_at invalid: %w", err)
@@ -57,7 +41,8 @@ func (api *ServerLogApi) search(ctx context.Context, req *LogSearchReq) (*servic
 	})
 }
 
-func (api *ServerLogApi) list(ctx context.Context, req *struct{}) (*service.LogListResp, error) {
+// GetList 获取服务日志文件列表。
+func (api *ServerLogApi) GetList(ctx context.Context, req *struct{}) (*service.LogListResp, error) {
 	return api.svc.ServerLog.List(ctx, req)
 }
 
